@@ -1,0 +1,16 @@
+{
+  "name": "@oxota/design",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The OXOTA (Охота) billiard club design system: colour tokens, fonts and brand icons shared by its sites and apps",
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "tokens.css",
+    "tailwind.css",
+    "fonts",
+    "assets",
+    "DESIGN.md"
+  ]
+}

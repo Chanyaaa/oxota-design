@@ -1,0 +1,175 @@
+/* ==========================================================================
+   OXOTA (Охота), Kharkiv billiard club: fonts and colour tokens.
+
+   Plain CSS with no build step, so any site can link it. A Tailwind v4 app
+   imports tailwind.css instead, which brings this file in.
+
+   Two layers, on purpose:
+
+   1. `--ox-*`: the club's Material Design 3 color roles, copied verbatim from
+      the production WordPress block theme. The names equal the theme's
+      `--wp--preset--color--*`, so a value changed on the site can be pasted
+      straight in here and vice versa. Never edit these to taste. Only the roles
+      the apps paint with are here; the rest are one copy away from the theme.
+   2. `--bg / --surface / --accent / …`: the roles screens paint with, expressed
+      in terms of layer 1. A brand change is a change to layer 1 alone.
+
+   Dark is the default, the owner's preference. Light is opt-in via
+   data-theme="light" on <html>.
+   ========================================================================== */
+
+/* Self-hosted, not Google Fonts: a cross-origin stylesheet blocked the first
+   paint of an installed app whenever its HTTP-cache copy had lapsed, and a
+   service worker cannot precache it. Files and unicode-range subsets are Google's
+   own (Roboto v51, Playfair Display v40); math carries the arrows and the ∞ on an
+   untimed clock. Ukrainian ґ, є, і, ї sit in the cyrillic subset. */
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/roboto-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/roboto-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/roboto-math.woff2') format('woff2');
+  unicode-range: U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF;
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/playfair-display-700-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/playfair-display-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------- OXOTA roles — dark ---------------------------- */
+:root {
+  color-scheme: dark;
+
+  --ox-primary: rgb(255 182 149); /* peach — CTAs, active nav, icons */
+  --ox-on-primary: rgb(83 34 8);
+  --ox-secondary-container: rgb(84 55 42);
+  --ox-tertiary: rgb(220 216 134); /* chartreuse — ratings, prizes */
+  --ox-error: rgb(255 180 171);
+  --ox-on-error: rgb(105 0 5);
+  --ox-background: rgb(24 18 16); /* near-black espresso */
+  --ox-on-surface: rgb(237 224 219); /* warm cream */
+  --ox-on-surface-variant: rgb(216 194 185);
+  --ox-outline: rgb(160 141 133);
+  --ox-outline-variant: rgb(83 67 61);
+  --ox-surface-container-low: rgb(33 26 24);
+  --ox-surface-container: rgb(37 30 27);
+  --ox-surface-container-high: rgb(48 40 38);
+}
+
+/* ------------------------- OXOTA roles — light --------------------------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --ox-primary: rgb(108 54 26);
+  --ox-on-primary: rgb(255 255 255);
+  --ox-secondary-container: rgb(255 215 198);
+  --ox-tertiary: rgb(100 97 28);
+  --ox-error: rgb(186 26 26);
+  --ox-on-error: rgb(255 255 255);
+  --ox-background: rgb(255 248 246);
+  --ox-on-surface: rgb(33 26 24);
+  --ox-on-surface-variant: rgb(83 67 61);
+  --ox-outline: rgb(133 115 108);
+  --ox-outline-variant: rgb(216 194 185);
+  --ox-surface-container-low: rgb(255 241 236);
+  --ox-surface-container: rgb(249 235 230);
+  --ox-surface-container-high: rgb(243 229 225);
+}
+
+/* ------------------------------ App roles -------------------------------- */
+/*
+   Elevation in MD3 is lightness, not shadow: the page is `background`, and
+   panels step up the surface-container ladder. That is why --surface..--surface-3
+   are container steps rather than four hand-picked greys.
+*/
+:root,
+:root[data-theme='light'] {
+  /* Surfaces */
+  --bg: var(--ox-background);
+  --surface: var(--ox-surface-container-low);
+  --surface-2: var(--ox-surface-container);
+  --surface-3: var(--ox-surface-container-high);
+  --line: var(--ox-outline-variant);
+  --line-2: var(--ox-outline);
+
+  /* Text */
+  --fg: var(--ox-on-surface);
+  --fg-2: var(--ox-on-surface-variant);
+
+  /* Accents */
+  --accent: var(--ox-primary);
+  /* The MD3 state layer: hover mixes `on-primary` 8% into `primary`. */
+  --accent-2: color-mix(in srgb, var(--ox-on-primary) 8%, var(--ox-primary));
+  --accent-soft: var(--ox-secondary-container);
+  --on-accent: var(--ox-on-primary);
+
+  /* Prizes and ratings are the brand's rare chartreuse highlight, not gold */
+  --gold: var(--ox-tertiary);
+  --gold-soft: color-mix(in srgb, var(--ox-tertiary) 16%, var(--ox-surface-container));
+
+  --danger: var(--ox-error);
+  --danger-soft: color-mix(in srgb, var(--ox-error) 14%, var(--ox-surface-container));
+  --on-danger: var(--ox-on-error);
+  /* No third accent in the brand — "attention" borrows the tertiary highlight */
+  --warn: var(--ox-tertiary);
+}
+
+/* Roles that are not one club role each, and what Tailwind has no utilities
+   for: the modal backdrop, the scrollbar, the <select> arrow. The arrow is an
+   image, so its stroke is written out per theme instead of referring to a
+   variable. */
+:root {
+  /* A positive state; in Arena, "in play right now": a running clock, a busy
+     table. Not a club role: an MD3 custom colour made from Arena's floor-plan
+     cloth (#2f6b4f), harmonized to --ox-primary (hue 148.8) at the club roles'
+     chroma of 33 rather than MD3's stock 48, which would shout over the peach.
+     Peach stays for "tap here". Tone 80 in dark, 40 in light, as MD3 places a
+     role. The tint behind it is secondary-container's tone and chroma at this
+     hue, like --accent-soft: a color-mix of a dark green into the pink light
+     surface came out mud-grey. A brand change must regenerate it by hand. */
+  --live: rgb(162 211 161);
+  --live-soft: rgb(48 66 48);
+  --fg-3: rgb(160 141 133); /* --ox-outline: the muted step */
+  /* A piece lifted off its container (the selected tab). Raised is lighter in
+     both themes, which is a different end of the container ladder in each:
+     the top step here, the page colour in light. */
+  --surface-raised: var(--ox-surface-container-high);
+  --backdrop: rgb(0 0 0 / 0.7);
+  --scrollbar-thumb-hover: rgb(160 141 133);
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a08d85' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+:root[data-theme='light'] {
+  --live: rgb(60 104 63);
+  --live-soft: rgb(210 228 206);
+  /* Not --ox-outline: on a light page it reads 3.4:1 under 12px text. One step
+     back towards on-surface-variant buys 5.2:1 and keeps the warm ramp. */
+  --fg-3: rgb(107 92 86);
+  --surface-raised: var(--ox-background);
+  --backdrop: rgb(33 26 24 / 0.4);
+  --scrollbar-thumb-hover: rgb(133 115 108);
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b5c56' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}

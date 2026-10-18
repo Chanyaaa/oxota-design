@@ -1,0 +1,321 @@
+/* OXOTA for a Tailwind v4 app: the tokens as utilities (bg-surface, text-fg-2,
+   text-meta, rounded-2xl, animate-rise, …), base styles and a few utilities.
+   Import it right after Tailwind, and put the app's own rules after it:
+
+     @import 'tailwindcss';
+     @import '@oxota/design/tailwind.css'; */
+@import './tokens.css';
+
+/* -------------------------- Tokens for Tailwind --------------------------- */
+/*
+   inline is mandatory. Without it Tailwind bakes the variable's build-time
+   value into the utilities, and `border-accent/40` freezes forever as the
+   peach from the dark theme. With inline the utility refers to var(--accent),
+   and the transparency is resolved through color-mix in the browser.
+*/
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-raised: var(--surface-raised);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-on-danger: var(--on-danger);
+  --color-warn: var(--warn);
+
+  --color-live: var(--live);
+  --color-live-soft: var(--live-soft);
+}
+
+/* Theme-independent */
+@theme {
+  /* Typography: Playfair Display 700 carries every heading (the upscale club
+     voice), Roboto every piece of body and UI text. Two families, no more.
+     Scores, timers, prices and totals are Roboto with tabular figures (.tnum);
+     a third, mono family would not be the brand's. */
+  --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Playfair Display', ui-serif, Georgia, 'Times New Roman', serif;
+
+  /* The Roboto scale is four roles, split by job rather than by look:
+     text-base (16) is what you type and read at length; text-sm (14) names
+     and acts: names, buttons, tabs, field labels; text-meta describes: the
+     line under a name, a subtitle, a hint; text-caption tags: badges,
+     counters, the "you" mark. There is no 12: in Arena the line under a name
+     had drifted to 11, 12 and 13 px, one role in three sizes. Headings are
+     Playfair at 24 (page), 18 (section, modal) and 16 (card, panel). */
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.125rem;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1rem;
+
+  /* Corner radii, from the theme's custom.borderRadius: 8px on controls,
+     12px on cards and panels, 16px on large media, 28px on hero panels. */
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+
+  /* MD3 elevation, the one step the apps need: a sticky header floats.
+     Dark panels rely on the surface ladder instead of a shadow. */
+  --shadow-elevation-2: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+
+  /* Motion: quick and subtle. Arrivals decelerate (MD3 emphasized decelerate);
+     leaving accelerates and is shorter, so something dismissed never holds up
+     the next tap. The keyframes are below, outside @theme. */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-arrive: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-leave: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --default-transition-duration: 150ms;
+
+  --animate-fade-in: fade-in 200ms var(--ease-standard);
+  --animate-rise: rise 320ms var(--ease-arrive) backwards;
+  --animate-sink: sink 160ms var(--ease-leave) forwards;
+  --animate-sheet-up: sheet-up 360ms var(--ease-arrive);
+  --animate-zoom-in: zoom-in 240ms var(--ease-arrive);
+  --animate-pop: pop 300ms var(--ease-standard);
+}
+
+/* A phone on its side: what fits on a portrait screen needs a second look in
+   under 480 px of height. Width alone cannot tell it from a tablet. */
+@custom-variant short (@media (max-height: 30rem));
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+/* --rise is the distance: a full-screen modal travels further than a card */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes sink {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+/* Starts small so a badge that has just appeared grows in, not blinks in */
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+    /* Names are typed by people: a 40-letter word with no spaces must wrap
+       instead of pushing the layout sideways. Single-line spots use truncate */
+    overflow-wrap: break-word;
+    /* viewport-fit=cover lets a sideways iPhone draw under its notch: keep the
+       page clear of it. Fixed layers (dialogs, toasts) inset themselves. */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Every heading is Playfair. No negative tracking: it was there to tighten a
+     grotesque, and on a high-contrast serif it closes the letterforms up.
+     Never under 16px: the hairlines are drawn for display sizes, and at 14 a
+     panel title came out lighter than the Roboto rows it heads. Lining
+     figures: the default old-style digits dipped below the line in
+     "Турнір 30.09.2026", right above the lining date in the meta line. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: normal;
+    font-variant-numeric: lining-nums;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Respect the system "reduce motion" setting. Motion drawn on a canvas
+     (Arena's confetti) escapes CSS and has to ask the media query itself. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+@layer utilities {
+  /* Scores, timers, prices and totals: equal-width digits line up in a column
+     and do not jitter as they change */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* An uppercase label naming a group or a value: a settings group, a stat
+     tile. One recipe, where there were three sizes, two weights and two
+     trackings. Caps stand at cap height, so 11px reads like 13px lowercase;
+     the tracking keeps Cyrillic caps from clotting. */
+  .caps-label {
+    font-size: var(--text-caption);
+    /* Through --tw-leading, as Tailwind's own text-* do: this class is emitted
+       after leading-*, and would otherwise override a leading-none beside it */
+    line-height: var(--tw-leading, var(--text-caption--line-height));
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* iOS safe areas */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .px-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  /* The native <select> arrow: its color is an image, and changes with the theme */
+  .select-arrow {
+    background-image: var(--select-arrow);
+  }
+}
+
+/* The search field's clear button: WebKit draws a bold white cross that belongs to neither theme */
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--fg-3);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E")
+    center / 1.25rem no-repeat;
+  cursor: pointer;
+}
+input[type='search']::-webkit-search-cancel-button:hover {
+  background-color: var(--fg);
+}
+
+/* Pseudo-elements escape the reduced-motion reset in @layer base (`*` does not
+   match them), so their motion is opted into here instead. */
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open]::backdrop {
+    animation: var(--animate-fade-in);
+  }
+
+  /* Where ::details-content or interpolate-size is missing, <details> opens at
+     once, as it always did */
+  details {
+    interpolate-size: allow-keywords;
+  }
+  details::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 250ms var(--ease-standard),
+      content-visibility 250ms allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* The modal dim: <dialog> draws it itself, and there is no class for it */
+dialog::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(4px);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
