@@ -6,6 +6,10 @@
      @import '@oxota/design/tailwind.css'; */
 @import './tokens.css';
 
+/* The primitives in ui.tsx are markup of the app's too, and Tailwind skips node_modules unless
+   told. The path is this file's, so every app that imports it scans them with no setup of its own */
+@source './ui.tsx';
+
 /* -------------------------- Tokens for Tailwind --------------------------- */
 /*
    inline is mandatory. Without it Tailwind bakes the variable's build-time
@@ -157,6 +161,14 @@
        page clear of it. Fixed layers (dialogs, toasts) inset themselves. */
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* <dialog> leaves the page behind it scrolling. Held still while one is in the DOM, not by a
+     save and restore per dialog: those, released out of order (the back button unmounts a screen's
+     modal and the one over it at once), left the page locked with nothing open. Mounted rather
+     than :modal, so a dialog that measures the page (Арена's tour) finds the scrollbar gone */
+  body:has(dialog) {
+    overflow: hidden;
   }
 
   /* Every heading is Playfair. No negative tracking: it was there to tighten a

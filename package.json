@@ -1,16 +1,35 @@
 {
   "name": "@oxota/design",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "The OXOTA (Охота) billiard club design system: colour tokens, fonts and brand icons shared by its sites and apps",
+  "description": "The OXOTA (Охота) billiard club design system: colour tokens, fonts, brand icons and the React primitives shared by its sites and apps",
   "scripts": {
-    "test": "node --test"
+    "test": "node --import ./jsx-hooks.mjs --test \"*.test.mjs\" \"*.test.tsx\"",
+    "lint": "tsc && eslint ."
   },
   "files": [
     "tokens.css",
     "tailwind.css",
+    "ui.tsx",
     "fonts",
     "assets",
     "DESIGN.md"
-  ]
+  ],
+  "peerDependencies": {
+    "lucide-react": ">=0.546.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "lucide-react": "^0.546.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "~5.8.2",
+    "typescript-eslint": "^8.72.0"
+  }
 }

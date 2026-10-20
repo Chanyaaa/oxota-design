@@ -192,6 +192,18 @@ Gently rounded, from the theme's `custom.borderRadius`: 8 px on controls (`round
 
 Quick and quiet. Arrivals decelerate (`ease-arrive`, MD3 emphasized decelerate); departures accelerate and are shorter (`ease-leave`), so a dismissed thing never holds up the next tap. Colour transitions take 150 ms. The animations are `fade-in`, `rise` (its distance is `--rise`), `sink`, `sheet-up`, `zoom-in` and `pop`. `prefers-reduced-motion` turns all of them off.
 
+## Components
+
+The primitives in `ui.tsx` (`@oxota/design/ui`), shared by the apps. Each app's DESIGN.md says how it uses them.
+
+- **Buttons:** 8 px corners and 44 px high (`md`); 36 px (`sm`) for a mouse or a dense row, raised back to 44 with `pointer-coarse:`; 52 px (`lg`) for a lone full-width action. Primary is the solid peach, one per area. Tonal (`accent-soft` with a peach border) is the action repeated on every row or card. Secondary is the default, ghost is for cancel, and danger-solid confirms a deletion inside `ConfirmInline`. Disabled is a 12% `fg` fill with 38% text; `aria-disabled` keeps that look and still takes the tap, so the button can say what is missing. `IconButton` is a 44 px square named by its label.
+- **Fields:** `TextInput`, `TextArea` and a native `Select` on `surface-2`, 44 px high with 16 px text. Focus is the 2 px peach ring every control has, and the fill steps up to `surface-3`: a tinted border alone all but vanished on light. `aria-invalid` turns the border `danger`. A date or time field draws its box on a wrapper, because iOS Safari sizes a padded one wider than its column.
+- **Choice and tabs:** `Segmented` sets a value in a form; the selected option is `accent-soft` with peach text, and `null` leaves all of them unselected where a default would be a guess. `TabBar` switches the view of one screen on a neutral track, the selected tab raised in `surface-raised`, with an optional count on a tab.
+- **Cards and badges:** `Card` is `surface` with a hairline that turns peach when the card is yours to act on and green while it is in play, fading over 300 ms. `Badge` is a 24 px pill in neutral, accent, gold, danger or live; `pulse` adds a pulsing dot for what is happening this minute, not for what is merely switched on.
+- **Modal:** a native `<dialog>`. `sm` is a bottom sheet for short fixed content; `md` and `lg` take a phone's whole screen and become a centred card from 640 px. Esc and the close button ask the owner through `onClose` rather than shutting it, so a screen with unsaved work can answer first.
+- **Toasts:** success is the inverse surface (`fg` fill) and leaves after 3 s, or 5 s with an undo; an error is `danger` with retry and close and stays until dismissed. Over an open modal the toast is laid inside it, the only place a tap reaches.
+- **Placeholders:** `Skeleton` holds the height of content on its way, `EmptyState` is a dashed panel for nothing yet, and `Spinner` is a status read out by its label.
+
 ## Do's and Don'ts
 
 ### Do:
