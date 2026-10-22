@@ -45,6 +45,41 @@ function resolve(value, vars) {
   });
 }
 
+/** An sRGB colour as [r, g, b] in 0–255: an rgb() as tokens.css writes it, or a color-mix of two in srgb */
+function rgb(value) {
+  const mix = value.match(/^color-mix\(in srgb, (rgb\([^)]*\)) (\d+)%, (rgb\([^)]*\))\)$/);
+  if (mix) {
+    const [a, share, b] = [rgb(mix[1]), Number(mix[2]) / 100, rgb(mix[3])];
+    return a.map((channel, i) => channel * share + b[i] * (1 - share));
+  }
+  const m = value.match(/^rgb\((\d+) (\d+) (\d+)\)$/);
+  assert.ok(m, `cannot read the colour ${value}`);
+  return m.slice(1).map(Number);
+}
+
+// WCAG 2's relative luminance and contrast ratio
+const luminance = (color) => {
+  const [r, g, b] = color.map((c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+test("a Badge's text reads at 4.5:1 on its fill in both themes", () => {
+  // BADGE_TONES in ui.tsx: an 11 px caption, which WCAG AA holds to 4.5:1 however bold it is
+  const tones = [['fg-2', 'surface-2'], ['accent', 'accent-soft'], ['gold', 'gold-soft'], ['danger', 'danger-soft'], ['live', 'live-soft']];
+  const short = [];
+  for (const [theme, vars] of Object.entries(themes())) {
+    for (const [text, fill] of tones) {
+      const ratio = contrast(rgb(resolve(vars[`--${text}`], vars)), rgb(resolve(vars[`--${fill}`], vars)));
+      if (ratio < 4.5) short.push(`${text} on ${fill} in ${theme}: ${ratio.toFixed(2)}:1`);
+    }
+  }
+  assert.deepEqual(short, []);
+});
+
 test('every colour in DESIGN.md is the value tokens.css paints in that theme', () => {
   const { dark, light } = themes();
   const colors = Object.entries(frontmatter(read('./DESIGN.md'))).filter(([key]) => key.startsWith('colors.'));

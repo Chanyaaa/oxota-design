@@ -168,6 +168,11 @@
   /* Not --ox-outline: on a light page it reads 3.4:1 under 12px text. One step
      back towards on-surface-variant buys 5.2:1 and keeps the warm ramp. */
   --fg-3: rgb(107 92 86);
+  /* Less of the hue than in dark: at 16% and 14% the fill left gold and danger
+     text at 4.45:1 and 4.42:1, under the 4.5:1 a Badge's 11px caption needs.
+     12% and 10% give 4.7:1. */
+  --gold-soft: color-mix(in srgb, var(--ox-tertiary) 12%, var(--ox-surface-container));
+  --danger-soft: color-mix(in srgb, var(--ox-error) 10%, var(--ox-surface-container));
   --surface-raised: var(--ox-background);
   --backdrop: rgb(33 26 24 / 0.4);
   --scrollbar-thumb-hover: rgb(133 115 108);

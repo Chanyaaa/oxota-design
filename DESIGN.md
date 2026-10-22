@@ -37,11 +37,11 @@ colors:
   accent-soft-light: "rgb(255 215 198)"
   on-accent-light: "rgb(255 255 255)"
   gold-light: "rgb(100 97 28)"
-  gold-soft-light: "color-mix(in srgb, rgb(100 97 28) 16%, rgb(249 235 230))"
+  gold-soft-light: "color-mix(in srgb, rgb(100 97 28) 12%, rgb(249 235 230))"
   live-light: "rgb(60 104 63)"
   live-soft-light: "rgb(210 228 206)"
   danger-light: "rgb(186 26 26)"
-  danger-soft-light: "color-mix(in srgb, rgb(186 26 26) 14%, rgb(249 235 230))"
+  danger-soft-light: "color-mix(in srgb, rgb(186 26 26) 10%, rgb(249 235 230))"
   on-danger-light: "rgb(255 255 255)"
   backdrop-light: "rgb(33 26 24 / 0.4)"
 typography:
