@@ -106,7 +106,7 @@ rounded:
 
 The «Охота» club after dark: espresso-brown surfaces, warm cream text, Playfair Display on every heading as the club's upscale voice, and plain Roboto for everything else. Colour is rare, so a hue on screen always means something; each app's own DESIGN.md says what it means there. Every target a finger can reach is at least 44 px.
 
-The palette began on the club's WordPress site, and its colour roles are copied from there verbatim. Арена (arena.oxota.kh.ua) is built on this package, the banquet app (banket.oxota.kh.ua) is next, and the site will follow when it leaves WordPress. The emblem in `assets/oxota-emblem.svg` is the club's.
+The palette began on the club's WordPress site, and its colour roles are copied from there verbatim. Арена (arena.oxota.kh.ua) is built on this package, the banquet app (banket.oxota.kh.ua) is next, and the site will follow when it leaves WordPress. The emblem in `assets/oxota-emblem.svg` is the club's. Its wordmark, «OXOTA» with the emblem's disc as the middle «О», is for headers wide enough to hold it: `assets/oxota-wordmark-on-light.svg` on a light page and `assets/oxota-wordmark-on-dark.svg` on a dark one, since the letters are painted into the file and an `<img>` cannot follow the theme. The emblem stays for the favicon, the install icons and anything small.
 
 **Key Characteristics:**
 - Dark by default, light opt-in; both are the club's own Material Design 3 roles.

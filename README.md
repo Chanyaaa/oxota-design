@@ -8,7 +8,7 @@ The design system of the «Охота» billiard club in Kharkiv: fonts, colour 
 | `tailwind.css` | For a Tailwind v4 app. It imports `tokens.css` and adds the roles as utilities (`bg-surface`, `text-fg-2`), the type scale (`text-meta`, `text-caption`), radii, the header shadow, easings and animations, the `short:` variant (a phone on its side), base styles and a few utilities (`.tnum`, `.caps-label`, `.pb-safe`, `.px-safe`, `.no-scrollbar`, `.select-arrow`). It also points Tailwind at `ui.tsx` and holds the page still while a `<dialog>` is open. |
 | `ui.tsx` | The primitives the apps share, imported as `@oxota/design/ui`: buttons, cards, badges, fields, segmented choice, tabs, the modal, toasts, the inline confirm and the placeholders. TypeScript source with no words of its own. |
 | `fonts/` | Roboto 400–700 and Playfair Display 700: Google's cyrillic, latin and math woff2 subsets, with their SIL Open Font License texts. |
-| `assets/` | The club's emblem, the favicon and the install icons (192, 512, maskable 512, Apple touch). |
+| `assets/` | The club's emblem, its wordmark (one file for a light page, one for a dark page), the favicon and the install icons (192, 512, maskable 512, Apple touch). |
 | `DESIGN.md` | The roles, the components and the rules. Its frontmatter carries the values for design tools, and `npm test` checks the colours against `tokens.css`. |
 
 ## Using it in an app
