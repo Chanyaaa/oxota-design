@@ -49,6 +49,8 @@ The package holds no text in any language. Four primitives take their words as p
 | `Spinner` | `label`, what a screen reader hears while it turns |
 | `ToastProvider` | `labels: { undo, retry, close }` |
 
+`useToast().success` returns the toast's id; `dismiss(id)` sends that toast away if it is still the one on screen, for an undo that has gone stale.
+
 Toasts stand 1rem above the bottom of the screen plus `--bar-lift`, which the app sets to the height of whatever bar it fixes along the bottom (a tab bar, an order's total). A modal needs no scroll lock of its own: `body:has(dialog)` in `tailwind.css` holds the page still while a dialog is in the DOM.
 
 ## Changing it

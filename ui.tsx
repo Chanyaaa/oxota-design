@@ -600,13 +600,23 @@ interface ToastState {
   variant: 'success' | 'error';
   onRetry?: () => void;
   undo?: ToastUndo;
+  /** Sent away by dismiss: it sinks like any other */
+  dismissed?: boolean;
 }
 
 interface ToastContextValue {
-  /** Auto-closes after a few seconds; `undo` adds a "Put back" button and a little more time to reach it. */
-  success: (message: string, undo?: ToastUndo) => void;
+  /**
+   * Auto-closes after a few seconds; `undo` adds a "Put back" button and a little more time to reach it.
+   * Returns the toast's id for `dismiss`.
+   */
+  success: (message: string, undo?: ToastUndo) => number;
   /** Stays until dismissed by hand; onRetry adds a "Retry" button. */
   error: (message: string, onRetry?: () => void) => void;
+  /**
+   * Closes the toast `success` returned this id for, if it is still up: an undo that could take back
+   * something newer than what it was offered for must leave. A later toast is left alone
+   */
+  dismiss: (id: number) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -624,7 +634,8 @@ interface ToastLabels {
 const ToastPopover: React.FC<{ toast: ToastState; labels: ToastLabels; onClose: () => void }> = ({ toast, labels, onClose }) => {
   const ref = useRef<HTMLDivElement>(null);
   // Every dismissal sinks the toast first; onClose unmounts it once that ends
-  const [leaving, setLeaving] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const leaving = closing || Boolean(toast.dismissed);
   // Under the pointer or holding focus, it waits: an undo must not leave while being reached for
   const [held, setHeld] = useState(false);
   const hasUndo = Boolean(toast.undo);
@@ -654,7 +665,7 @@ const ToastPopover: React.FC<{ toast: ToastState; labels: ToastLabels; onClose: 
 
   useEffect(() => {
     if (toast.variant !== 'success' || held) return;
-    const timer = setTimeout(() => setLeaving(true), hasUndo ? TOAST_UNDO_MS : TOAST_SUCCESS_MS);
+    const timer = setTimeout(() => setClosing(true), hasUndo ? TOAST_UNDO_MS : TOAST_SUCCESS_MS);
     return () => clearTimeout(timer);
   }, [toast.variant, hasUndo, held]);
 
@@ -699,7 +710,7 @@ const ToastPopover: React.FC<{ toast: ToastState; labels: ToastLabels; onClose: 
           className="shrink-0 pointer-coarse:h-11"
           onClick={() => {
             toast.undo?.run();
-            setLeaving(true);
+            setClosing(true);
           }}
         >
           {toast.undo.label ?? labels.undo}
@@ -715,13 +726,13 @@ const ToastPopover: React.FC<{ toast: ToastState; labels: ToastLabels; onClose: 
               className="pointer-coarse:h-11"
               onClick={() => {
                 toast.onRetry?.();
-                setLeaving(true);
+                setClosing(true);
               }}
             >
               {labels.retry}
             </Button>
           )}
-          <IconButton label={labels.close} onClick={() => setLeaving(true)}>
+          <IconButton label={labels.close} onClick={() => setClosing(true)}>
             <X className="w-5 h-5" />
           </IconButton>
         </div>
@@ -733,16 +744,22 @@ const ToastPopover: React.FC<{ toast: ToastState; labels: ToastLabels; onClose: 
 
 export const ToastProvider: React.FC<{ labels: ToastLabels; children: React.ReactNode }> = ({ labels, children }) => {
   const [toast, setToast] = useState<ToastState | null>(null);
+  // A count, not the time: two toasts in one millisecond would share an id, and dismiss would close the wrong one
+  const last = useRef(0);
 
   const success = useCallback((message: string, undo?: ToastUndo) => {
-    setToast({ id: Date.now(), message, variant: 'success', undo });
+    const id = ++last.current;
+    setToast({ id, message, variant: 'success', undo });
+    return id;
   }, []);
 
   const error = useCallback((message: string, onRetry?: () => void) => {
-    setToast({ id: Date.now(), message, variant: 'error', onRetry });
+    setToast({ id: ++last.current, message, variant: 'error', onRetry });
   }, []);
 
-  const value = useMemo(() => ({ success, error }), [success, error]);
+  const dismiss = useCallback((id: number) => setToast((t) => (t?.id === id ? { ...t, dismissed: true } : t)), []);
+
+  const value = useMemo(() => ({ success, error, dismiss }), [success, error, dismiss]);
 
   return (
     <ToastContext.Provider value={value}>
